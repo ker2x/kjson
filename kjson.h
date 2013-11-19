@@ -47,6 +47,6 @@ void kjson_init(kjson_parser_t* parser);
 kjson_err_t kjson_parse(kjson_parser_t* parser, const char* string, kjson_token_t* token, size_t num_tokens);
 signed int kjson_get_string_size(kjson_token_t token);
 char* kjson_get_string(kjson_token_t token, char* json, char* buf);
-
+static kjson_err_t kjson_parse_primitive(kjson_parser* parser, const char* json, kjson_token_t* token, unsigned int num_token);
 
 #endif /* __KJSON_H_ */ 
