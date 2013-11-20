@@ -108,23 +108,27 @@ static kjson_err_t kjson_parse_primitive(kjson_parser* parser,
 				if(token == NULL) {
 					/* not enough token, rewind and return error */
 					parser->offset = start;
-					return JSMN_ERROR_NOMEM;
+					return KJSON_OOM_E;
+				} else {
+					/* got new token, set it */
+					kjson_set_token(token, KJSON_PRIMITIVE, start, parser->offset);
+					token->parent = parser->parent;
+					parser->offset--;
+					return KJSON_SUCCESS_E;
 				}
-				/* got new token, set it */
-				kjson_set_token(token, KJSON_PRIMITIVE, start, parser->offset);
-				token->parent = parser->parent;
-				parser->offset--;
-				return KJSON_SUCCESS;
+				break;
+			default:
+				break;
 		}
-		/* wtf ? */
-		if (json[parser->offset] < 32 || json[parser->offset] >= 127) {
+		/* zap control char */
+		if (json[parser->offset] < 32) {
 			parser->offset = start;
-			return KJSON_ERROR_INVAL;
+			return KJSON_INVALID_E;
 		}
 	}
 
 	/* reached EOF without returning anything, json incomplete. rewind and return error */
 	parser->offset = start;
-	return KJSON_ERROR_PART;
+	return KJSON_EOF_E;
 
 }
